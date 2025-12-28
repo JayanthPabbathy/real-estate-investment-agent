@@ -320,42 +320,45 @@ function displayTransparency(assumptions, limitations) {
 
 function setupReportDownload(analysisId, reportPath) {
     const reportStatus = document.getElementById('reportStatus');
-    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+    const downloadJsonBtn = document.getElementById('downloadJsonBtn');
     
-    if (reportPath) {
-        reportStatus.textContent = 'PDF report is ready for download';
-        downloadBtn.style.display = 'block';
-        downloadBtn.onclick = () => {
-            window.open(`${API_BASE_URL}${reportPath}`, '_blank');
+    // JSON is available immediately (from API response)
+    reportStatus.textContent = 'Reports are being generated...';
+    
+    // JSON download (available after ~2 seconds)
+    setTimeout(() => {
+        downloadJsonBtn.style.display = 'inline-block';
+        downloadJsonBtn.onclick = () => {
+            window.open(`${API_BASE_URL}/api/v1/analysis/${analysisId}`, '_blank');
         };
-    } else {
-        // Poll for report generation
-        reportStatus.textContent = 'Generating comprehensive PDF report...';
-        
-        const pollInterval = setInterval(async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/v1/report/${analysisId}`);
-                const data = await response.json();
-                
-                if (data.status === 'completed' && data.report_path) {
-                    clearInterval(pollInterval);
-                    reportStatus.textContent = 'PDF report is ready for download';
-                    downloadBtn.style.display = 'block';
-                    downloadBtn.onclick = () => {
-                        window.open(`${API_BASE_URL}${data.report_path}`, '_blank');
-                    };
-                } else if (data.status === 'failed') {
-                    clearInterval(pollInterval);
-                    reportStatus.textContent = 'Report generation failed. Please try again.';
-                }
-            } catch (error) {
-                console.error('Error polling report status:', error);
+    }, 2000);
+    
+    // PDF download (check if ready)
+    const pollInterval = setInterval(async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/v1/report/${analysisId}`, { method: 'HEAD' });
+            
+            if (response.ok) {
+                clearInterval(pollInterval);
+                reportStatus.textContent = 'Reports are ready for download!';
+                downloadPdfBtn.style.display = 'inline-block';
+                downloadPdfBtn.onclick = () => {
+                    window.open(`${API_BASE_URL}/api/v1/report/${analysisId}`, '_blank');
+                };
             }
-        }, 3000);
-        
-        // Stop polling after 1 minute
-        setTimeout(() => clearInterval(pollInterval), 60000);
-    }
+        } catch (error) {
+            console.log('PDF still generating...');
+        }
+    }, 2000);
+    
+    // Stop polling after 30 seconds
+    setTimeout(() => {
+        clearInterval(pollInterval);
+        if (downloadPdfBtn.style.display === 'none') {
+            reportStatus.textContent = 'JSON available. PDF may take a few more moments.';
+        }
+    }, 30000);
 }
 
 function getRecommendationIcon(recommendation) {

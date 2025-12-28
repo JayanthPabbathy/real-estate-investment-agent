@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pathlib import Path
 import uuid
+import json
 from datetime import datetime
 from loguru import logger
 import sys
@@ -263,10 +264,66 @@ async def analyze_investment(request: InvestmentRequest, background_tasks: Backg
             limitations=analysis.get('limitations', [])
         )
         
-        # Generate PDF report in background
+        # Generate PDF report and save JSON in background
         report_filename = f"report_{request_id}.pdf"
+        json_filename = f"analysis_{request_id}.json"
         
-        def generate_report():
+        def generate_outputs():
+            # Save JSON output
+            json_output = {
+                'request_id': request_id,
+                'timestamp': response.timestamp.isoformat(),
+                'property_summary': response.property_summary,
+                'predictions': {
+                    'predicted_price': predictions['predicted_price'],
+                    'predicted_rent': predictions['predicted_rent'],
+                    'predicted_rental_yield': predictions['predicted_rental_yield'],
+                    'price_confidence': predictions['price_confidence'],
+                    'price_range_min': predictions['price_range_min'],
+                    'price_range_max': predictions['price_range_max'],
+                    'model_used': predictions['model_used']
+                },
+                'recommendation': {
+                    'recommendation': response.recommendation.recommendation,
+                    'confidence_score': response.recommendation.confidence_score,
+                    'reasoning': response.recommendation.reasoning,
+                    'expected_appreciation_3yr': response.recommendation.expected_appreciation_3yr,
+                    'expected_appreciation_5yr': response.recommendation.expected_appreciation_5yr,
+                    'expected_roi': response.recommendation.expected_roi
+                },
+                'investment_drivers': {
+                    'positive_drivers': response.investment_drivers.positive_drivers,
+                    'negative_drivers': response.investment_drivers.negative_drivers,
+                    'market_sentiment': response.investment_drivers.market_sentiment,
+                    'location_score': response.investment_drivers.location_score,
+                    'infrastructure_score': response.investment_drivers.infrastructure_score
+                },
+                'risk_assessment': {
+                    'risk_level': response.risk_assessment.risk_level,
+                    'risk_factors': response.risk_assessment.risk_factors,
+                    'mitigation_strategies': response.risk_assessment.mitigation_strategies,
+                    'regulatory_compliance_score': response.risk_assessment.regulatory_compliance_score
+                },
+                'retrieved_documents': [
+                    {
+                        'doc_id': doc.doc_id,
+                        'title': doc.title,
+                        'content': doc.content[:500],  # First 500 chars
+                        'relevance_score': doc.relevance_score,
+                        'category': doc.category
+                    } for doc in formatted_docs
+                ],
+                'assumptions': response.assumptions,
+                'limitations': response.limitations
+            }
+            
+            # Save JSON file
+            json_path = settings.REPORTS_DIR / json_filename
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(json_output, f, indent=2, ensure_ascii=False)
+            logger.info(f"JSON output saved: {json_filename}")
+            
+            # Generate PDF report
             report_data = {
                 'request_id': request_id,
                 'property_summary': response.property_summary,
@@ -293,8 +350,9 @@ async def analyze_investment(request: InvestmentRequest, background_tasks: Backg
                 'limitations': response.limitations
             }
             report_generator.generate_report(report_data, report_filename)
+            logger.info(f"PDF report generated: {report_filename}")
         
-        background_tasks.add_task(generate_report)
+        background_tasks.add_task(generate_outputs)
         response.report_url = f"/api/v1/report/{request_id}"
         
         logger.info(f"Investment analysis completed: {request_id}")
@@ -305,7 +363,7 @@ async def analyze_investment(request: InvestmentRequest, background_tasks: Backg
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
-@app.get("/api/v1/report/{request_id}", tags=["Reports"])
+@app.api_route("/api/v1/report/{request_id}", methods=["GET", "HEAD"], tags=["Reports"])
 async def get_report(request_id: str):
     """Download PDF report"""
     
@@ -320,6 +378,21 @@ async def get_report(request_id: str):
         filename=f"investment_report_{request_id}.pdf"
     )
 
+
+@app.get("/api/v1/analysis/{request_id}", tags=["Reports"])
+async def get_analysis_json(request_id: str):
+    """Download JSON analysis"""
+    
+    json_file = settings.REPORTS_DIR / f"analysis_{request_id}.json"
+    
+    if not json_file.exists():
+        raise HTTPException(status_code=404, detail="Analysis JSON not found")
+    
+    return FileResponse(
+        path=json_file,
+        media_type="application/json",
+        filename=f"investment_analysis_{request_id}.json"
+    )
 
 @app.get("/api/v1/stats", tags=["Statistics"])
 async def get_stats():

@@ -20,7 +20,7 @@ Focus Areas: GenAI, ML Engineering, RAG, Agentic AI
 
 - **Stage 1: Predictive Modeling** - XGBoost/LightGBM ensemble for price & rent prediction
 - **Stage 2: RAG System** - Vector database (ChromaDB) with intelligent document retrieval
-- **Stage 3: Generative Reasoning** - GPT-4 Turbo for investment analysis synthesis
+- **Stage 3: Generative Reasoning** - Azure OpenAI GPT-4o for investment analysis synthesis
 - **Stage 4: Agentic Architecture** - Multi-agent system with MCP communication pattern
 - **Stage 5: Production API** - FastAPI with Docker deployment
 
@@ -28,6 +28,8 @@ Focus Areas: GenAI, ML Engineering, RAG, Agentic AI
 
 - ✨ REST API with OpenAPI documentation
 - 📊 Automated PDF report generation
+- 📄 JSON output for programmatic access
+- 🎨 Modern responsive web frontend
 - 🐳 Docker containerization
 - 📈 Model performance monitoring
 - 🔍 Comprehensive error handling
@@ -62,7 +64,7 @@ User Request → FastAPI → Orchestrator Agent
 | **Valuation Agent** | Price/rent prediction | XGBoost, LightGBM, sklearn |
 | **Market Intelligence Agent** | Market data retrieval | RAG, ChromaDB, Sentence Transformers |
 | **Risk & Compliance Agent** | Regulatory assessment | RAG, Document retrieval |
-| **Narrative Agent** | Synthesis & recommendations | GPT-4 Turbo, Structured prompts |
+| **Narrative Agent** | Synthesis & recommendations | Azure OpenAI GPT-4o, Structured prompts |
 | **Orchestrator Agent** | Workflow coordination | Async message passing (MCP pattern) |
 
 ---
@@ -72,15 +74,15 @@ User Request → FastAPI → Orchestrator Agent
 ### Prerequisites
 
 - Python 3.11+
-- OpenAI API Key
+- Azure OpenAI API Key
 - Docker (optional, for containerized deployment)
 
 ### Quick Start
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd "Real Estate Agent"
+git clone https://github.com/JayanthPabbathy/real-estate-investment-agent.git
+cd real-estate-investment-agent
 ```
 
 2. **Create virtual environment**
@@ -98,7 +100,11 @@ pip install -r requirements.txt
 4. **Configure environment**
 ```bash
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+# Edit .env and add:
+# - OPENAI_API_KEY (Azure OpenAI key)
+# - OPENAI_ENDPOINT (Azure OpenAI endpoint URL)
+# - OPENAI_API_VERSION (e.g., 2025-01-01-preview)
+# - LLM_MODEL (e.g., gpt-4o)
 ```
 
 5. **Generate synthetic data (first run)**
@@ -108,10 +114,18 @@ python src/data_generation.py
 
 6. **Run the application**
 ```bash
+# Start the API server
 python src/api/main.py
+
+# In another terminal, open the frontend
+cd frontend
+start index.html  # Windows
+open index.html   # Mac
+xdg-open index.html  # Linux
 ```
 
-The API will be available at `http://localhost:8000`
+The API will be available at `http://localhost:8000`  
+The frontend will open in your default browser
 
 ---
 
@@ -154,6 +168,11 @@ curl -X POST http://localhost:8000/api/v1/analyze \
 curl http://localhost:8000/api/v1/report/{request_id} --output report.pdf
 ```
 
+#### Get JSON Analysis
+```bash
+curl http://localhost:8000/api/v1/analysis/{request_id} --output analysis.json
+```
+
 #### System Statistics
 ```bash
 curl http://localhost:8000/api/v1/stats
@@ -162,6 +181,32 @@ curl http://localhost:8000/api/v1/stats
 ### Interactive API Documentation
 
 Visit `http://localhost:8000/docs` for Swagger UI
+
+### Web Frontend
+
+The platform includes a modern, responsive web interface:
+
+1. **Open the frontend:**
+   ```bash
+   cd frontend
+   start index.html  # or open in browser
+   ```
+
+2. **Features:**
+   - 📝 User-friendly property input form
+   - 📊 Real-time analysis results
+   - 📈 Interactive data visualizations
+   - 📄 PDF report download
+   - 📊 JSON analysis download
+   - 🎨 Modern gradient UI design
+   - 📱 Fully responsive (mobile, tablet, desktop)
+
+3. **Usage:**
+   - Fill in property details (city, size, bedrooms, etc.)
+   - Set investment context (horizon, goals, risk tolerance)
+   - Click "Analyze Investment"
+   - View comprehensive results
+   - Download PDF report and JSON analysis
 
 ---
 
@@ -177,6 +222,9 @@ docker build -t real-estate-intelligence .
 docker run -d \
   -p 8000:8000 \
   -e OPENAI_API_KEY=your_key_here \
+  -e OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com \
+  -e OPENAI_API_VERSION=2025-01-01-preview \
+  -e LLM_MODEL=gpt-4o \
   --name real-estate-api \
   real-estate-intelligence
 ```
@@ -380,12 +428,17 @@ Real Estate Agent/
 │   │   └── helpers.py           # Utilities
 │   ├── config.py                # Configuration
 │   └── data_generation.py       # Synthetic data
+├── frontend/
+│   ├── index.html               # Web interface
+│   ├── styles.css               # Styling
+│   ├── script.js                # Frontend logic
+│   └── README.md                # Frontend docs
 ├── tests/
 │   ├── test_system.py           # Unit tests
 │   └── test_api.py              # API tests
 ├── data/                        # Data storage
 ├── models/                      # Trained models
-├── reports/                     # PDF reports
+├── reports/                     # PDF/JSON outputs
 ├── logs/                        # Application logs
 ├── requirements.txt             # Dependencies
 ├── Dockerfile                   # Docker config
@@ -404,10 +457,11 @@ Real Estate Agent/
 |----------|-----------|
 | **Web Framework** | FastAPI 0.109.0 |
 | **ML/Data Science** | scikit-learn, XGBoost, LightGBM, pandas, numpy |
-| **LLM/GenAI** | OpenAI GPT-4 Turbo, LangChain |
-| **Embeddings** | Sentence Transformers |
-| **Vector DB** | ChromaDB |
+| **LLM/GenAI** | Azure OpenAI GPT-4o, LangChain |
+| **Embeddings** | Sentence Transformers (all-MiniLM-L6-v2) |
+| **Vector DB** | ChromaDB with HNSW indexing |
 | **PDF Generation** | ReportLab |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
 | **Logging** | Loguru |
 | **Testing** | pytest, httpx |
 | **Containerization** | Docker, Docker Compose |
@@ -454,18 +508,66 @@ Real Estate Agent/
 - [ ] Implement caching layer (Redis)
 - [ ] Add rate limiting
 - [ ] Expand test coverage to 80%+
+- [ ] Export analysis history
+- [ ] Batch processing API
 
 ### Medium-term
 - [ ] Real data integration pipelines
 - [ ] Advanced uncertainty quantification
 - [ ] Multi-language support
 - [ ] Mobile app integration
+- [ ] Comparison mode (multiple properties)
+- [ ] Email report delivery
 
 ### Long-term
 - [ ] Automated model retraining pipeline
 - [ ] Real-time market data feeds
 - [ ] Custom fine-tuned models
 - [ ] Interactive visualization dashboard
+- [ ] Market trend prediction
+- [ ] Portfolio optimization tools
+
+---
+
+## 📊 Output Formats
+
+The system provides analysis in two formats:
+
+### 1. PDF Report (`report_{request_id}.pdf`)
+Professional formatted report including:
+- Executive summary
+- Property details
+- Predictions with confidence intervals
+- Investment recommendation
+- Risk assessment
+- Market intelligence insights
+- Methodology explanation
+
+### 2. JSON Analysis (`analysis_{request_id}.json`)
+Structured data for programmatic access:
+```json
+{
+  "request_id": "uuid",
+  "timestamp": "ISO-8601",
+  "property_summary": {...},
+  "predictions": {
+    "predicted_price": 9788946.52,
+    "predicted_rent": 31446.15,
+    "predicted_rental_yield": 3.85,
+    "price_confidence": 0.85,
+    ...
+  },
+  "recommendation": {...},
+  "investment_drivers": {...},
+  "risk_assessment": {...},
+  "assumptions": [...],
+  "limitations": [...]
+}
+```
+
+**Access:**
+- PDF: `GET /api/v1/report/{request_id}`
+- JSON: `GET /api/v1/analysis/{request_id}`
 
 ---
 
@@ -477,8 +579,21 @@ MIT License - See LICENSE file for details
 
 ## 👤 Author
 
-**Candidate for ML Engineer / Data Scientist Role**  
-Golden Mile Properties Interview Assignment
+**Jayanth Pabbathy**  
+GitHub: [@JayanthPabbathy](https://github.com/JayanthPabbathy)  
+Repository: [real-estate-investment-agent](https://github.com/JayanthPabbathy/real-estate-investment-agent)
+
+---
+
+## 🌟 Key Highlights
+
+✨ **Complete 5-Stage Pipeline:** From ML predictions to multi-agent orchestration  
+🎯 **Production-Ready:** Docker, logging, error handling, testing  
+🧠 **AI-Powered:** Azure OpenAI GPT-4o + RAG for intelligent analysis  
+📊 **Dual Output:** PDF reports + JSON for programmatic access  
+🎨 **Modern UI:** Responsive web frontend with real-time results  
+🔍 **Transparent:** Explicit assumptions, limitations, and confidence scores  
+🏗️ **Scalable Architecture:** Multi-agent MCP pattern for extensibility  
 
 ---
 

@@ -173,11 +173,16 @@
 
                 <!-- Download Report -->
                 <div class="card">
-                    <h2>📄 Download Report</h2>
-                    <p id="reportStatus">Generating comprehensive PDF report...</p>
-                    <button id="downloadBtn" class="btn-secondary" style="display: none;">
-                        Download PDF Report
-                    </button>
+                    <h2>📄 Download Reports</h2>
+                    <p id="reportStatus">Generating comprehensive reports...</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button id="downloadPdfBtn" class="btn-secondary" style="display: none;">
+                            📄 Download PDF Report
+                        </button>
+                        <button id="downloadJsonBtn" class="btn-secondary" style="display: none;">
+                            📊 Download JSON Analysis
+                        </button>
+                    </div>
                 </div>
             </section>
         </main>
