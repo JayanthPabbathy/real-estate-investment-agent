@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+
+# Environment variables
+.env
+.env.local
+
+# Data files
+data/
+*.csv
+*.parquet
+*.db
+
+# Models
+models/
+*.pkl
+*.joblib
+
+# Outputs
+outputs/
+reports/
+*.pdf
+
+# Logs
+logs/
+*.log
+
+# Vector DB
+vector_db/
+chroma/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

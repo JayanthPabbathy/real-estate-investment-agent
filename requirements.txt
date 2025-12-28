@@ -1,0 +1,52 @@
+# Core Dependencies
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+
+# Machine Learning
+scikit-learn
+xgboost
+lightgbm
+numpy
+pandas
+scipy
+
+# Deep Learning & Embeddings
+torch
+sentence-transformers
+
+# Vector Database
+chromadb
+faiss-cpu
+
+# LLM & GenAI
+openai
+langchain
+langchain-community
+langchain-openai
+tiktoken
+
+# PDF Generation
+reportlab
+pypdf2
+pdfplumber
+
+# Data Processing
+openpyxl
+python-dateutil
+
+# Logging & Monitoring
+loguru
+prometheus-client
+
+# Testing
+pytest
+pytest-asyncio
+httpx
+
+# Utilities
+python-dotenv
+aiofiles
+tenacity

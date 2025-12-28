@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Investment Intelligence Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏢 Real Estate Investment Intelligence</h1>
+            <p class="subtitle">AI-Powered Investment Analysis for Golden Mile Properties</p>
+        </header>
+
+        <main>
+            <!-- Input Form -->
+            <section class="card input-section">
+                <h2>Property Details</h2>
+                <form id="analysisForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <select id="city" name="city" required>
+                                <option value="">Select City</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Pune">Pune</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Kolkata">Kolkata</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="locality">Locality *</label>
+                            <input type="text" id="locality" name="locality" placeholder="e.g., Bandra West" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="property_type">Property Type *</label>
+                            <select id="property_type" name="property_type" required>
+                                <option value="">Select Type</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Builder Floor">Builder Floor</option>
+                                <option value="Penthouse">Penthouse</option>
+                                <option value="Studio">Studio</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="size_sqft">Size (sq ft) *</label>
+                            <input type="number" id="size_sqft" name="size_sqft" placeholder="e.g., 1200" min="300" max="10000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bedrooms">Bedrooms *</label>
+                            <input type="number" id="bedrooms" name="bedrooms" placeholder="e.g., 3" min="1" max="6" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bathrooms">Bathrooms *</label>
+                            <input type="number" id="bathrooms" name="bathrooms" placeholder="e.g., 2" min="1" max="6" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="property_age">Property Age (years) *</label>
+                            <input type="number" id="property_age" name="property_age" placeholder="e.g., 5" min="0" max="50" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="floor_number">Floor Number</label>
+                            <input type="number" id="floor_number" name="floor_number" placeholder="e.g., 8" min="0" max="50">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total_floors">Total Floors</label>
+                            <input type="number" id="total_floors" name="total_floors" placeholder="e.g., 15" min="1" max="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="distance_to_metro_km">Distance to Metro (km)</label>
+                            <input type="number" id="distance_to_metro_km" name="distance_to_metro_km" placeholder="e.g., 1.5" step="0.1" min="0" max="50">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>
+                                <input type="checkbox" id="parking_available" name="parking_available">
+                                Parking Available
+                            </label>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>
+                                <input type="checkbox" id="security_features" name="security_features">
+                                Security Features
+                            </label>
+                        </div>
+                    </div>
+
+                    <h3>Investment Context</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="investment_horizon">Investment Horizon (years) *</label>
+                            <input type="number" id="investment_horizon" name="investment_horizon" value="5" min="1" max="30" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="primary_goal">Primary Goal *</label>
+                            <select id="primary_goal" name="primary_goal" required>
+                                <option value="appreciation">Capital Appreciation</option>
+                                <option value="rental_income">Rental Income</option>
+                                <option value="both">Balanced</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="risk_tolerance">Risk Tolerance *</label>
+                            <select id="risk_tolerance" name="risk_tolerance" required>
+                                <option value="low">Conservative</option>
+                                <option value="medium">Moderate</option>
+                                <option value="high">Aggressive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="analyzeBtn" class="btn-primary">
+                        <span class="btn-text">Analyze Investment</span>
+                        <span class="loader" style="display: none;"></span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <!-- Prediction Output -->
+                <div class="card">
+                    <h2>📊 Predictive Analysis</h2>
+                    <div id="predictionOutput"></div>
+                </div>
+
+                <!-- Investment Recommendation -->
+                <div class="card">
+                    <h2>💡 Investment Recommendation</h2>
+                    <div id="recommendationOutput"></div>
+                </div>
+
+                <!-- Risk Assessment -->
+                <div class="card">
+                    <h2>⚠️ Risk Assessment</h2>
+                    <div id="riskOutput"></div>
+                </div>
+
+                <!-- Investment Drivers -->
+                <div class="card">
+                    <h2>📈 Investment Drivers</h2>
+                    <div id="driversOutput"></div>
+                </div>
+
+                <!-- Market Intelligence -->
+                <div class="card">
+                    <h2>🔍 Market Intelligence</h2>
+                    <div id="marketOutput"></div>
+                </div>
+
+                <!-- Assumptions & Limitations -->
+                <div class="card">
+                    <h2>📋 Analysis Transparency</h2>
+                    <div id="transparencyOutput"></div>
+                </div>
+
+                <!-- Download Report -->
+                <div class="card">
+                    <h2>📄 Download Report</h2>
+                    <p id="reportStatus">Generating comprehensive PDF report...</p>
+                    <button id="downloadBtn" class="btn-secondary" style="display: none;">
+                        Download PDF Report
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Golden Mile Properties | Powered by AI</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
