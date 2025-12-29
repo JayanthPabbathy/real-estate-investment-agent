@@ -571,20 +571,6 @@ Structured data for programmatic access:
 
 ---
 
-## 📄 License
-
-MIT License - See LICENSE file for details
-
----
-
-## 👤 Author
-
-**Jayanth Pabbathy**  
-GitHub: [@JayanthPabbathy](https://github.com/JayanthPabbathy)  
-Repository: [real-estate-investment-agent](https://github.com/JayanthPabbathy/real-estate-investment-agent)
-
----
-
 ## 🌟 Key Highlights
 
 ✨ **Complete 5-Stage Pipeline:** From ML predictions to multi-agent orchestration  
